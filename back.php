@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password = "";
+$password = "ammar12345678";
 $dbname = "users";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -16,24 +16,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $email = $_POST['email'];
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-        $stmt = $conn->prepare("INSERT INTO user (name, email, password) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $name, $email, $password);
+        $query = $conn->prepare("INSERT INTO user (name, email, password) VALUES (?, ?, ?)");
+        $query->bind_param("sss", $name, $email, $password);
 
-        if ($stmt->execute()) {
+        if ($query->execute()) {
             echo "Registration successful!";
         } else {
-            echo "Error: " . $stmt->error;
+            echo "Error: " . $query->error;
         }
 
-        $stmt->close();
-    } elseif (isset($_POST['login'])) {
+        $query->close();
+
+    } 
+}
+
+
+    if($_SERVER["REQUEST_METHOD"] == "POST")
+    {
+    if (isset($_POST['login'])) {
         $email = $_POST['email'];
         $password = $_POST['password'];
 
-        $stmt = $conn->prepare("SELECT * FROM user WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $query = $conn->prepare("SELECT * FROM user WHERE email = ?");
+        $query->bind_param("s", $email);
+        $query->execute();
+        $result = $query->get_result();
    
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
@@ -46,9 +53,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "No user found with this email.";
         }
 
-        $stmt->close();
+        $query->close();
+
+    
     }
 }
+
+
 
 $conn->close();
 ?>
